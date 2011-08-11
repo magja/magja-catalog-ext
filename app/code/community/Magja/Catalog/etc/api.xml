@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<config>
+	<api>
+		<resources>
+			<catalog_product_attribute translate="title"
+				module="catalog">
+				<title>Product attributes API</title>
+				<model>catalog/product_attribute_api</model>
+				<acl>catalog/product</acl>
+				<methods>
+					<create translate="title" module="catalog">
+						<title>Create new product attribute</title>
+						<acl>catalog/product/attribute/create</acl>
+					</create>
+					<delete translate="title" module="catalog">
+						<title>Delete product attribute</title>
+						<acl>catalog/product/attribute/delete</acl>
+					</delete>
+					<addoptions translate="title" module="catalog">
+						<title>Add attribute options</title>
+						<acl>catalog/product/attribute/addoptions</acl>
+					</addoptions>
+				</methods>
+			</catalog_product_attribute>
+		</resources>
+		<resources_alias>
+			<category>catalog_product_attribute</category>
+		</resources_alias>
+	</api>
+</config>
