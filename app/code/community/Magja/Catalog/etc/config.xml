@@ -13,6 +13,7 @@
 			<catalog>
 				<rewrite>
 					<product_attribute_api>Magja_Catalog_Model_Product_Attribute_Api</product_attribute_api>
+					<product_attribute_media_api>Magja_Catalog_Model_Product_Attribute_Media_Api</product_attribute_media_api>
 				</rewrite>
 			</catalog>
 		</models>
