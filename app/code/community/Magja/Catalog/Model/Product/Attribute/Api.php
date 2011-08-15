@@ -10,6 +10,59 @@
 class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Product_Attribute_Api {
 	
 	/**
+	 * Retrieve product attribute info by code
+	 *
+	 * @param string $attributeCode
+	 * @param string|int $store
+	 * @return array
+	 */
+	public function info($attributeCode, $store = null) {
+		
+		$storeId = $this->_getStoreId ( $store );
+		$attribute = Mage::getModel ( 'catalog/product' )->setStoreId ( $storeId )->getResource ()->getAttribute ( $attributeCode )->setStoreId ( $storeId );
+		
+		if (!$attribute) {
+            $this->_fault('not_exists');
+        }
+		
+		if (! $attribute->getId () || $attribute->isScopeGlobal ()) {
+			$scope = 'global';
+		} elseif ($attribute->isScopeWebsite ()) {
+			$scope = 'website';
+		} else {
+			$scope = 'store';
+		}
+		
+		//$result = print_r($attribute, true);
+		
+        $result = array(
+        	'attribute_id' 	=> $attribute->getId(),
+            'code'        	=> $attribute->getAttributeCode(),
+            'type'       	=> $attribute->getFrontendInput(),
+            'backend' 		=> $attribute->getData('backend_type'),
+            'frontend'   	=> $attribute->getFrontendLabel(),
+        	'label'   		=> $attribute->getFrontendLabel(),
+        	'class'   		=> $attribute->getData('frontend_class'),
+        	'default'   	=> $attribute->getData('default_value'),
+        	'visible'   	=> $attribute->getIsVisible(),
+        	'required'   	=> $attribute->getData('is_required'),
+        	'user_defined'  => $attribute->getData('is_user_defined'),
+        	'searchable'   	=> $attribute->getIsSearchable(),
+        	'filterable'   	=> $attribute->getIsFilterable(),
+        	'comparable'   	=> $attribute->getIsComparable(),
+        	'visible_on_front' => $attribute->getData('is_visible_on_front'),
+        	'visible_in_advanced_search' => $attribute->getIsVisibleInAdvancedSearch(),
+        	'unique'		=> $attribute->getData('is_unique'),
+        	'used_for_sort_by' => $attribute->getUsedForSortBy(),
+        	'sortBy' 		=> $attribute->getUsedForSortBy(),
+        	'scope'        	=> $scope,
+        	'is_configurable' => $attribute->getIsConfigurable(),
+        );
+        
+		return $result;
+	}
+	
+	/**
 	 * Create new product attribute.
 	 *
 	 * @param string $attributeName

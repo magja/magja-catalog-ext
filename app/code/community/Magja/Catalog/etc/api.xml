@@ -8,6 +8,10 @@
 				<model>catalog/product_attribute_api</model>
 				<acl>catalog/product</acl>
 				<methods>
+					<info translate="title" module="catalog">
+                        <title>Retrieve product attribute</title>
+                        <acl>catalog/product/attribute/info</acl>
+                    </info>
 					<create translate="title" module="catalog">
 						<title>Create new product attribute</title>
 						<acl>catalog/product/attribute/create</acl>
