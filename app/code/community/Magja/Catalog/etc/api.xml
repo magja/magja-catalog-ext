@@ -1,43 +1,41 @@
 <?xml version="1.0"?>
 <config>
-	<api>
-		<resources>
-			<catalog_product_attribute translate="title"
-				module="catalog">
-				<title>Product attributes API</title>
-				<model>catalog/product_attribute_api</model>
-				<acl>catalog/product</acl>
-				<methods>
-					<info translate="title" module="catalog">
+    <api>
+        <resources>
+            <catalog_product_attribute translate="title" module="catalog">
+                <title>Product attributes API</title>
+                <model>catalog/product_attribute_api</model>
+                <acl>catalog/product</acl>
+                <methods>
+                    <info translate="title" module="catalog">
                         <title>Retrieve product attribute</title>
                         <acl>catalog/product/attribute/info</acl>
                     </info>
-					<create translate="title" module="catalog">
-						<title>Create new product attribute</title>
-						<acl>catalog/product/attribute/create</acl>
-					</create>
-					<delete translate="title" module="catalog">
-						<title>Delete product attribute</title>
-						<acl>catalog/product/attribute/delete</acl>
-					</delete>
-					<addoptions translate="title" module="catalog">
-						<title>Add attribute options</title>
-						<acl>catalog/product/attribute/addoptions</acl>
-					</addoptions>
-				</methods>
-			</catalog_product_attribute>
-			<catalog_product_attribute_media
-				translate="title" module="catalog">
-				<title>Product Images API</title>
-				<model>catalog/product_attribute_media_api</model>
-				<acl>catalog/product/media</acl>
-				<methods>
-					<md5 translate="title" module="catalog">
-						<title>Retrieve product image md5sum</title>
-						<acl>catalog/product/media/md5</acl>
-					</md5>
-				</methods>
-			</catalog_product_attribute_media>
-		</resources>
-	</api>
+                    <create translate="title" module="catalog">
+                        <title>Create new product attribute</title>
+                        <acl>catalog/product/attribute/create</acl>
+                    </create>
+                    <delete translate="title" module="catalog">
+                        <title>Delete product attribute</title>
+                        <acl>catalog/product/attribute/delete</acl>
+                    </delete>
+                    <addoptions translate="title" module="catalog">
+                        <title>Add attribute options</title>
+                        <acl>catalog/product/attribute/addoptions</acl>
+                    </addoptions>
+                </methods>
+            </catalog_product_attribute>
+            <catalog_product_attribute_media translate="title" module="catalog">
+                <title>Product Images API</title>
+                <model>catalog/product_attribute_media_api</model>
+                <acl>catalog/product/media</acl>
+                <methods>
+                    <md5 translate="title" module="catalog">
+                        <title>Retrieve product image md5sum</title>
+                        <acl>catalog/product/media/md5</acl>
+                    </md5>
+                </methods>
+            </catalog_product_attribute_media>
+        </resources>
+    </api>
 </config>
