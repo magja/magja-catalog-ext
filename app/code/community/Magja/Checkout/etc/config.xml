@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Magja_Checkout>
+			<version>0.0.2</version>
+			<depends>
+				<Mage_Checkout />
+			</depends>
+		</Magja_Checkout>
+	</modules>
+	<global>
+		<models>
+			<checkout>
+				<rewrite>
+					<cart_product_v2>Magja_Checkout_Model_Cart_Product_Api_V2</cart_product_v2>
+				</rewrite>
+			</checkout>
+		</models>
+	</global>
+</config>
