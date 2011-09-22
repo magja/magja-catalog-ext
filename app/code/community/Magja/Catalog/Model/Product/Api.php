@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Magja Catalog product api extension
  * This class add the option to add a configurable product
