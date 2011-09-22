@@ -4,6 +4,9 @@
         <Magja_Catalog>
             <active>true</active>
             <codePool>community</codePool>
+            <depends>
+				<Mage_Catalog />
+			</depends>
         </Magja_Catalog>
     </modules>
 </config>
