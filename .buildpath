@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+	<buildpathentry kind="src" path="app/code/community/Magja/Catalog/Model/Product"/>
+	<buildpathentry kind="src" path="app/code/community/Magja/Checkout/Model/Cart/Product/Api"/>
+	<buildpathentry combineaccessrules="false" kind="prj" path="/magento"/>
+</buildpath>
