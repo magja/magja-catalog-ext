@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : Gorilla_ApiExtension.xml
+    Created on : August 22, 2011, 12:46 PM
+    Author     : aallon
+    Description:
+        Purpose of the document follows.
+-->
+
+<config>
+    <modules>
+        <Gorilla_ApiExtension>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Gorilla_ApiExtension>
+    </modules>
+</config>

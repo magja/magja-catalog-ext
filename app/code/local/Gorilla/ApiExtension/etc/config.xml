@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : config.xml
+    Created on : August 22, 2011, 12:47 PM
+    Author     : aallon
+    Description:
+        Purpose of the document follows.
+-->
+
+<config>
+    <modules>
+        <Gorilla_ApiExtension>
+            <version>0.2.2</version>
+        </Gorilla_ApiExtension>
+    </modules>
+    <global>
+        <models>
+            <apiextension>
+                <class>Gorilla_ApiExtension_Model</class>
+            </apiextension>
+        </models>
+        <helpers>
+            <apiextension>
+                <class>Gorilla_ApiExtension_Helper</class>
+            </apiextension>
+        </helpers>
+    </global>
+</config>

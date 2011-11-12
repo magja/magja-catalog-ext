@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+
+<!--
+    Document   : api.xml
+    Created on : August 22, 2011, 12:49 PM
+    Author     : aallon
+    Description:
+        Purpose of the document follows.
+-->
+<config>
+    <api>
+        <resources>
+            <product_attribute_option translate="title" module="apiextension">
+                <model>apiextension/product_attribute_option</model>
+                <title>API Extension Product Attribute Options</title>
+                <acl>apiextension</acl>
+                <methods>
+                    <create translate="title" module="apiextension">
+                        <title>Create Item</title>
+                        <acl>apiextension/attribute_option_create</acl>
+                    </create>
+                </methods>
+                <faults module="apiextension">
+                    <not_exist>
+                        <code>100</code>
+                        <message>Invalid attribute ID.</message>
+                    </not_exist>
+                    <data_invalid>
+                        <code>101</code>
+                        <message>Invalid data given. Details in error message.</message>
+                    </data_invalid>
+                    <not_created>
+                        <code>102</code>
+                        <message>Some or all attribute options not created.</message>
+                    </not_created>
+                </faults>
+            </product_attribute_option>
+            <catalog_product_configurable>
+                <model>apiextension/product_configurable</model>
+                <title>API Extension Configurable Products</title>
+                <acl>apiextension</acl>
+                <methods>
+                    <setConfigurableAttributes translate="title" module="apiextension">
+                        <title>Set Configurable Attributes</title>
+                        <acl>apiextension/product_configurable_write</acl>
+                    </setConfigurableAttributes>
+                    <associateSimpleChildren>
+                        <title>Associate Child Simple Products to Configurable Parent</title>
+                        <acl>apiextension/product_configurable_write</acl>
+                    </associateSimpleChildren>
+                </methods>
+                <faults module="apiextension">
+                    <data_invalid>
+                        <code>100</code>
+                        <message>Invalid data given. Details in error message.</message>
+                    </data_invalid>
+                    <product_not_exist>
+                        <code>101</code>
+                        <message>Invalid product sku.</message>
+                    </product_not_exist>
+                    <attribute_invalid>
+                        <code>102</code>
+                        <message>Not all attributes are valid.</message>
+                    </attribute_invalid>
+                    <unknown>
+                        <code>103</code>
+                        <message>An unknown error occured</message>
+                    </unknown>
+                </faults>
+            </catalog_product_configurable>
+        </resources>
+        <acl>
+            <resources>
+                <apiextension translate="title" module="apiextension">
+                    <title>Gorilla API Extension</title>
+                    <sort_order>1</sort_order>
+                    <attribute_option_create translate="title" module="apiextension">
+                        <title>Product Attribute Option Create</title>
+                    </attribute_option_create>
+                    <product_configurable_write>
+                        <title>Configurable Prodcut Write Access</title>
+                    </product_configurable_write>
+                </apiextension>
+            </resources>
+        </acl>
+    </api>
+</config>
