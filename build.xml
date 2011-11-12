@@ -9,9 +9,12 @@
 
 	<fail unless="extension.name"/>
 	<fail unless="extension.dirname"/>
-	<fail unless="extension.module.company"/>
+	<fail unless="extension.module1.company"/>
 	<fail unless="extension.module1.name"/>
+	<fail unless="extension.module2.company"/>
 	<fail unless="extension.module2.name"/>
+	<fail unless="extension.module3.company"/>
+	<fail unless="extension.module3.name"/>
 
 	<target name="remote.flush" description="Flush Magento cache storage on server.">
 		<fail unless="server.host"/>
@@ -42,28 +45,46 @@
     	<fail unless="server.host"/>
     	<fail unless="server.port"/>
     	<fail unless="server.dir"/>
-		<exec executable="ssh">
-			<arg value="-p"/>
-			<arg value="${server.port}"/>
-			<arg value="${server.user}@${server.host}"/>
-			<arg value="mkdir -vp ${server.dir}/app/code/community/${extension.module.company}" />
+		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			command="mkdir -vp '${server.dir}/app/code/community/${extension.module1.company}'"/>
+		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			command="mkdir -vp '${server.dir}/app/code/community/${extension.module2.company}'"/>
+		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			command="mkdir -vp '${server.dir}/app/code/community/${extension.module3.company}'"/>
+		<exec executable="rsync">
+			<arg value="-e"/>
+			<arg value="ssh -p${server.port}"/>
+			<arg value="-vza"/>
+			<arg value="--delete"/>
+			<arg value="${app.code.community.dir}/${extension.module1.company}/${extension.module1.name}"/>
+			<arg value="${server.user}@${server.host}:${server.dir}/app/code/community/${extension.module1.company}" />
 		</exec>
 		<exec executable="rsync">
 			<arg value="-e"/>
 			<arg value="ssh -p${server.port}"/>
 			<arg value="-vza"/>
 			<arg value="--delete"/>
-			<arg value="${app.code.community.dir}/${extension.module.company}/${extension.module1.name}"/>
-			<arg value="${app.code.community.dir}/${extension.module.company}/${extension.module2.name}"/>
-			<arg value="${server.user}@${server.host}:${server.dir}/app/code/community/${extension.module.company}" />
+			<arg value="${app.code.community.dir}/${extension.module2.company}/${extension.module2.name}"/>
+			<arg value="${server.user}@${server.host}:${server.dir}/app/code/community/${extension.module2.company}" />
 		</exec>
 		<exec executable="rsync">
 			<arg value="-e"/>
 			<arg value="ssh -p${server.port}"/>
 			<arg value="-vza"/>
 			<arg value="--delete"/>
-			<arg value="${app.etc.modules.dir}/${extension.module.company}_${extension.module1.name}.xml"/>
-			<arg value="${app.etc.modules.dir}/${extension.module.company}_${extension.module2.name}.xml"/>
+			<arg value="${app.code.community.dir}/${extension.module3.company}/${extension.module3.name}"/>
+			<arg value="${server.user}@${server.host}:${server.dir}/app/code/community/${extension.module3.company}" />
+		</exec>
+		<exec executable="rsync">
+			<arg value="-e"/>
+			<arg value="ssh -p${server.port}"/>
+			<arg value="-vza"/>
+			<arg value="${app.etc.modules.dir}/${extension.module1.company}_${extension.module1.name}.xml"/>
+			<arg value="${app.etc.modules.dir}/${extension.module2.company}_${extension.module2.name}.xml"/>
+			<arg value="${app.etc.modules.dir}/${extension.module3.company}_${extension.module3.name}.xml"/>
 			<arg value="${server.user}@${server.host}:${server.dir}/app/etc/modules" />
 		</exec>
     	<antcall target="remote.compile" />
@@ -78,7 +99,13 @@
 
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
 			keyfile="${user.home}/.ssh/id_rsa" trust="true"
-			command="rm -rvf '${server.dir}/app/code/community/${extension.module.company}/${extension.module1.name}' '${server.dir}/app/code/community/${extension.module.company}/${extension.module2.name}' '${server.dir}/app/design/frontend/base/default/layout/${extension.dirname}.xml' '${server.dir}/app/design/frontend/base/default/template/${extension.dirname}' '${server.dir}/skin/frontend/base/default/css/${extension.dirname}.css' '${server.dir}/skin/frontend/base/default/images/${extension.dirname}' '${server.dir}/skin/frontend/base/default/js/${extension.dirname}' '${server.dir}/app/etc/modules/${extension.module.company}_${extension.module1.name}.xml' '${server.dir}/app/etc/modules/${extension.module.company}_${extension.module2.name}.xml'"/>
+			command="rm -rvf '${server.dir}/app/code/community/${extension.module1.company}/${extension.module1.name}' '${server.dir}/app/etc/modules/${extension.module1.company}_${extension.module1.name}.xml'"/>
+		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			command="rm -rvf '${server.dir}/app/code/community/${extension.module2.company}/${extension.module2.name}' '${server.dir}/app/etc/modules/${extension.module2.company}_${extension.module2.name}.xml'"/>
+		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
+			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			command="rm -rvf '${server.dir}/app/code/community/${extension.module3.company}/${extension.module3.name}' '${server.dir}/app/etc/modules/${extension.module3.company}_${extension.module3.name}.xml'"/>
 		
 		<antcall target="remote.flush"/>
 		<antcall target="remote.compile"/>
@@ -87,20 +114,26 @@
 	<target name="symlink.create" description="Create symlinks to ${extension.name} theme in ${magento.dir}. It will not overwrite existing files/links.">
 		<fail unless="magento.dir" message="Please set 'magento.dir' property to your Magento installation folder."/>
 
-		<mkdir dir="${magento.dir}/app/code/community/${extension.module.company}"/>
-		<symlink link="${magento.dir}/app/code/community/${extension.module.company}/" resource="${app.code.community.dir}/${extension.module.company}/${extension.module1.name}" failonerror="false"/>
-		<symlink link="${magento.dir}/app/code/community/${extension.module.company}/" resource="${app.code.community.dir}/${extension.module.company}/${extension.module2.name}" failonerror="false"/>
-		<copy file="${app.etc.modules.dir}/${extension.module.company}_${extension.module1.name}.xml" todir="${magento.dir}/app/etc/modules/" verbose="true"/>
-		<copy file="${app.etc.modules.dir}/${extension.module.company}_${extension.module2.name}.xml" todir="${magento.dir}/app/etc/modules/" verbose="true"/>
+		<mkdir dir="${magento.dir}/app/code/community/${extension.module1.company}"/>
+		<mkdir dir="${magento.dir}/app/code/community/${extension.module2.company}"/>
+		<mkdir dir="${magento.dir}/app/code/community/${extension.module3.company}"/>
+		<symlink link="${magento.dir}/app/code/community/${extension.module1.company}/" resource="${app.code.community.dir}/${extension.module1.company}/${extension.module1.name}" failonerror="false"/>
+		<symlink link="${magento.dir}/app/code/community/${extension.module2.company}/" resource="${app.code.community.dir}/${extension.module2.company}/${extension.module2.name}" failonerror="false"/>
+		<symlink link="${magento.dir}/app/code/community/${extension.module3.company}/" resource="${app.code.community.dir}/${extension.module3.company}/${extension.module3.name}" failonerror="false"/>
+		<copy file="${app.etc.modules.dir}/${extension.module1.company}_${extension.module1.name}.xml" todir="${magento.dir}/app/etc/modules/" verbose="true"/>
+		<copy file="${app.etc.modules.dir}/${extension.module2.company}_${extension.module2.name}.xml" todir="${magento.dir}/app/etc/modules/" verbose="true"/>
+		<copy file="${app.etc.modules.dir}/${extension.module3.company}_${extension.module3.name}.xml" todir="${magento.dir}/app/etc/modules/" verbose="true"/>
 	</target>
 	   
 	<target name="symlink.delete" description="Delete symlinks to ${extension.name} theme in ${magento.dir}. It will only delete files or symlinks, not directories.">
 		<fail unless="magento.dir" message="Please set 'magento.dir' property to your Magento installation folder."/>
 
-		<symlink action="delete" link="${magento.dir}/app/code/community/${extension.module.company}/${extension.module1.name}" failonerror="false"/>
-		<symlink action="delete" link="${magento.dir}/app/code/community/${extension.module.company}/${extension.module2.name}" failonerror="false"/>
-		<delete file="${magento.dir}/app/etc/modules/${extension.module.company}_${extension.module1.name}.xml" />
-		<delete file="${magento.dir}/app/etc/modules/${extension.module.company}_${extension.module2.name}.xml" />
+		<symlink action="delete" link="${magento.dir}/app/code/community/${extension.module1.company}/${extension.module1.name}" failonerror="false"/>
+		<symlink action="delete" link="${magento.dir}/app/code/community/${extension.module2.company}/${extension.module2.name}" failonerror="false"/>
+		<symlink action="delete" link="${magento.dir}/app/code/community/${extension.module3.company}/${extension.module3.name}" failonerror="false"/>
+		<delete file="${magento.dir}/app/etc/modules/${extension.module1.company}_${extension.module1.name}.xml" />
+		<delete file="${magento.dir}/app/etc/modules/${extension.module2.company}_${extension.module2.name}.xml" />
+		<delete file="${magento.dir}/app/etc/modules/${extension.module3.company}_${extension.module3.name}.xml" />
 	</target>
 		
 </project>
