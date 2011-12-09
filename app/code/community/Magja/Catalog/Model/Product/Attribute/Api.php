@@ -129,5 +129,28 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 		return true;
 	}
 
+	/**
+	* Retrieve all attributes
+	*
+	* @return array
+	*/
+	public function listAll()
+	{
+		$attr = Mage::getModel('eav/entity_attribute');
+		$attrs = $attr->getCollection()->load();
+		Mage::log('Magja_Catalog_Model_Product_Attribute_Api.listAll:'. count($attrs) . ' attributes total');
+		$attrs_data = $attrs->getData();
+		
+		$result = array();
+		foreach ($attrs_data as $attribute) {
+			if ($attribute['entity_type_id'] != 4) // PRODUCT's entity type ID = 4
+				continue;
+			$attribute['code'] = $attribute['attribute_code'];
+			$result[] = $attribute;
+		}
+	
+		return $result;
+	}
+	
 }
 ?>

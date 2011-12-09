@@ -7,6 +7,10 @@
                 <model>catalog/product_attribute_api</model>
                 <acl>catalog/product</acl>
                 <methods>
+                    <listAll translate="title" module="catalog">
+                        <title>Retrieve list of all attributes</title>
+                        <acl>catalog/product/attribute/read</acl>
+                    </listAll>
                     <info translate="title" module="catalog">
                         <title>Retrieve product attribute</title>
                         <acl>catalog/product/attribute/info</acl>
