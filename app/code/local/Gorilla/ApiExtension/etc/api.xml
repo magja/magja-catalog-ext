@@ -78,7 +78,7 @@
                         <title>Product Attribute Option Create</title>
                     </attribute_option_create>
                     <product_configurable_write>
-                        <title>Configurable Prodcut Write Access</title>
+                        <title>Configurable Product Write Access</title>
                     </product_configurable_write>
                 </apiextension>
             </resources>
