@@ -65,5 +65,3 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		}
 	}
 }
-
-?>
