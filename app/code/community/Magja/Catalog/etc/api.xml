@@ -40,6 +40,65 @@
                     </md5>
                 </methods>
             </catalog_product_attribute_media>
+            <catalog_category translate="title" module="catalog">
+                <model>catalog/category_api</model>
+                <title>Category API</title>
+                <acl>catalog/category</acl>
+                <methods>
+                    <currentStore>
+                        <title>Set/Get current store view</title>
+                    </currentStore>
+                    <tree translate="title" module="catalog">
+                        <title>Retrieve hierarchical tree</title>
+                        <acl>catalog/category/tree</acl>
+                    </tree>
+                    <level translate="title" module="catalog">
+                        <title>Retrieve one level of categories by website/store view/parent category</title>
+                    </level>
+                    <info translate="title" module="catalog">
+                        <title>Retrieve category data</title>
+                        <acl>catalog/category/info</acl>
+                    </info>
+                    <create translate="title" module="catalog">
+                        <title>Create new category</title>
+                        <acl>catalog/category/create</acl>
+                    </create>
+                    <update translate="title" module="catalog">
+                        <title>Update category</title>
+                        <acl>catalog/category/update</acl>
+                    </update>
+                    <move translate="title" module="catalog">
+                        <title>Move category in tree</title>
+                        <acl>catalog/category/move</acl>
+                    </move>
+                    <delete translate="title" module="catalog">
+                        <title>Delete category</title>
+                        <acl>catalog/category/delete</acl>
+                    </delete>
+                    <assignedProducts translate="title" module="catalog">
+                        <title>Retrieve list of assigned products</title>
+                        <acl>catalog/category/product</acl>
+                    </assignedProducts>
+                    <assignProduct translate="title" module="catalog">
+                        <title>Assign product to category</title>
+                        <acl>catalog/category/product/assign</acl>
+                    </assignProduct>
+                    <updateProduct translate="title" module="catalog">
+                        <title>Update assigned product</title>
+                        <acl>catalog/category/product/update</acl>
+                    </updateProduct>
+                    <removeProduct translate="title" module="catalog">
+                        <title>Remove product assignment</title>
+                        <acl>catalog/category/product/remove</acl>
+                    </removeProduct>
+                    
+                    <flat translate="title" module="catalog">
+                        <title>Retrieve hierarchical tree using flat structure</title>
+                        <acl>catalog/category/tree</acl>
+                    </flat>
+                </methods>
+            </catalog_category>
+
         </resources>
     </api>
 </config>

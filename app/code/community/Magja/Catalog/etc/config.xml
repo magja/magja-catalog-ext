@@ -15,6 +15,8 @@
                     <product_attribute_api>Magja_Catalog_Model_Product_Attribute_Api</product_attribute_api>
                     <product_attribute_media_api>Magja_Catalog_Model_Product_Attribute_Media_Api</product_attribute_media_api>
                     <product_api>Magja_Catalog_Model_Product_Api</product_api>
+                    
+                    <category_api>Magja_Catalog_Model_Category_Api</category_api>
                 </rewrite>
             </catalog>
         </models>
