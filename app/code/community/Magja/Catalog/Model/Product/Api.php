@@ -64,4 +64,53 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 			$product->setCanSaveConfigurableAttributes ( 1 );
 		}
 	}
+	
+	/**
+	* Retrieve list of products with basic info (id, sku, type, set, name)
+	*
+	* @param array $filters
+	* @param string|int $store
+	* @return array
+	*/
+	public function items($filters = null, $store = null)
+	{
+		$collection = Mage::getModel('catalog/product')->getCollection()
+		->addStoreFilter($this->_getStoreId($store))
+		->addAttributeToSelect('name');
+	
+		if (is_array($filters)) {
+			try {
+				foreach ($filters as $field => $value) {
+					if (isset($this->_filtersMap[$field])) {
+						$field = $this->_filtersMap[$field];
+					}
+	
+					$collection->addFieldToFilter($field, $value);
+				}
+			} catch (Mage_Core_Exception $e) {
+				$this->_fault('filters_invalid', $e->getMessage());
+			}
+		}
+	
+		$result = array();
+	
+		foreach ($collection as $product) {
+			//            $result[] = $product->getData();
+			$categoryIds = $product->getCategoryIds();
+			
+			
+			
+			$result[] = array( // Basic product data
+	                'product_id' => $product->getId(),
+	                'sku'        => $product->getSku(),
+	                'name'       => $product->getName(),
+	                'set'        => $product->getAttributeSetId(),
+	                'type'       => $product->getTypeId(),
+	                'category_ids'       => $categoryIds,
+					'category_id'       => !empty($categoryIds) ? $categoryIds[0] : null
+			);
+		}
+		
+		return $result;
+	}
 }
