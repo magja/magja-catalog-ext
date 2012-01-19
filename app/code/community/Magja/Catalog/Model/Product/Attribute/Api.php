@@ -70,7 +70,9 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 	 * @param string|int $store
 	 * @return int
 	 */
-	public function create($attributeName, $attributeData, $store = null) {
+	public function create($attributeData, $store = null) {
+		$attributeName = $attributeDate['attribute_code'];
+		
 		// create product attribute
 		$installer = new Mage_Catalog_Model_Resource_Eav_Mysql4_Setup ( 'core_setup' );
 		$installer->addAttribute ( 'catalog_product', $attributeName, $attributeData );
@@ -136,20 +138,10 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 	*/
 	public function listAll()
 	{
-		$attr = Mage::getModel('eav/entity_attribute');
-		$attrs = $attr->getCollection()->load();
+		$attrs = Mage::getResourceModel('catalog/product_attribute_collection');
 		Mage::log('Magja_Catalog_Model_Product_Attribute_Api.listAll:'. count($attrs) . ' attributes total');
-		$attrs_data = $attrs->getData();
-		
-		$result = array();
-		foreach ($attrs_data as $attribute) {
-			if ($attribute['entity_type_id'] != 4) // PRODUCT's entity type ID = 4
-				continue;
-			$attribute['code'] = $attribute['attribute_code'];
-			$result[] = $attribute;
-		}
-	
-		return $result;
+		$attrs_data = $attrs->load()->getData();
+		return $attrs_data;
 	}
 	
 }

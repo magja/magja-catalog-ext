@@ -98,6 +98,15 @@
                     </flat>
                 </methods>
             </catalog_category>
+            <catalog_product>
+                <methods>
+                    <list_ex translate="title" module="catalog">
+                        <title>Retrieve products list by filters Include Price and Description etc.</title>
+                        <method>itemsEx</method>
+                        <acl>catalog/product/info</acl>
+                    </list_ex>
+                </methods>
+            </catalog_product>
         </resources>
     </api>
 </config>

@@ -66,17 +66,21 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 	}
 	
 	/**
-	* Retrieve list of products with basic info (id, sku, type, set, name)
+	* Retrieve products list by filters Include Price and Description etc.
 	*
 	* @param array $filters
 	* @param string|int $store
 	* @return array
+	* 
 	*/
-	public function items($filters = null, $store = null)
+	public function itemsEx($filters = null, $store = null)
 	{
 		$collection = Mage::getModel('catalog/product')->getCollection()
 		->addStoreFilter($this->_getStoreId($store))
-		->addAttributeToSelect('name');
+		->addAttributeToSelect('name')
+		->addAttributeToSelect('price')
+		->addAttributeToSelect('description');
+		
 	
 		if (is_array($filters)) {
 			try {
@@ -98,15 +102,16 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 			//            $result[] = $product->getData();
 			$categoryIds = $product->getCategoryIds();
 			
-			
-			
+				
 			$result[] = array( // Basic product data
 	                'product_id' => $product->getId(),
 	                'sku'        => $product->getSku(),
 	                'name'       => $product->getName(),
 	                'set'        => $product->getAttributeSetId(),
 	                'type'       => $product->getTypeId(),
-	                'category_ids'       => $categoryIds,
+					'price'      => $product->getPrice(),
+					'description'      => $product->getDescription(),
+					'category_ids'       => $categoryIds,
 					'category_id'       => !empty($categoryIds) ? $categoryIds[0] : null
 			);
 		}
