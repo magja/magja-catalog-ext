@@ -27,6 +27,11 @@
                         <title>Add attribute options</title>
                         <acl>catalog/product/attribute/addoptions</acl>
                     </addoptions>
+                    <options_all translate="title" module="catalog">
+                    	<title>Retrieve all attribute options</title>
+                    	<method>optionsAll</method>
+                        <acl>catalog/product/attribute/read</acl>
+                    </options_all>
                 </methods>
             </catalog_product_attribute>
             <catalog_product_attribute_media translate="title" module="catalog">

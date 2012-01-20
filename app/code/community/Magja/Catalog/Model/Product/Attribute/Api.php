@@ -144,5 +144,33 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 		return $attrs_data;
 	}
 	
+	/**
+	* Retrieve all attribute options
+	*/
+	public function optionsAll()
+	{
+		$allOptions = array();
+		$attributes = Mage::getResourceModel('catalog/product_attribute_collection');
+		$attributes->addFieldToFilter('is_user_defined', array('eq' => '1'));
+		$attributes->addFieldToFilter('is_configurable', array('eq' => '1'));
+		$attributes->addFieldToFilter('frontend_input', array('eq' => 'select'));
+		foreach ($attributes as $attr) {
+// 			echo "{$attr->getId()} {$attr->getAttributeCode()} {$attr->getIsConfigurable()}\n";
+			if ($attr->usesSource()) {
+				$source = $attr->getSource();
+				foreach ($source->getAllOptions() as $optionOrder => $optionValue) {
+					if (empty($optionOrder) || empty($optionValue))
+						continue;
+					$allOptions[] = array(
+						'attribute_id' => $attr->getId(),
+						'option_order' => $optionOrder,
+						'option_id' => $optionValue['value'],
+						'option_value' => $optionValue['label']);
+				}
+			}
+		}
+		return $allOptions;
+	}
+	
 }
 ?>
