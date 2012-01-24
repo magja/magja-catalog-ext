@@ -172,5 +172,46 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 		return $allOptions;
 	}
 	
+	/**
+	* Retrieve attribute sets including child groups and attributes
+	*
+	* @return array
+	*/
+	public function listFlat()
+	{
+		$entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
+		$collection = Mage::getResourceModel('eav/entity_attribute_set_collection')
+		->setEntityTypeFilter($entityType->getId());
+	
+		$result = array();
+		foreach ($collection as $attributeSet) {
+			$groups = Mage::getModel('eav/entity_attribute_group')
+				->getResourceCollection()
+				->setAttributeSetFilter($attributeSet->getId())
+				->load();
+				
+			foreach ($groups as $group) {
+				$groupAttributesCollection = Mage::getModel('eav/entity_attribute')
+					->getResourceCollection()
+					->setAttributeGroupFilter($group->getId())
+					->load();
+				
+				foreach ($groupAttributesCollection as $attr) {
+					$result[] = array('attribute_id' => $attr->getId(),
+						'attribute_code' => $attr->getAttributeCode(),
+						'group_id' => $group->getId(),
+						'group_name' => $group->getAttributeGroupName(),
+						'attribute_set_id' => $attributeSet->getId(),
+						'attribute_set_name' => $attributeSet->getAttributeSetName(),
+					);
+						
+				}
+			}
+	
+		}
+	
+		return $result;
+	}
+	
 }
 ?>

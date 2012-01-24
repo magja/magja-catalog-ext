@@ -32,6 +32,11 @@
                     	<method>optionsAll</method>
                         <acl>catalog/product/attribute/read</acl>
                     </options_all>
+                    <list_flat translate="title" module="catalog">
+                    	<title>Retrieve attribute sets including child attributes</title>
+                    	<method>listFlat</method>
+                        <acl>catalog/product/attribute/read</acl>
+                    </list_flat>
                 </methods>
             </catalog_product_attribute>
             <catalog_product_attribute_media translate="title" module="catalog">
