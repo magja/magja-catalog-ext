@@ -88,13 +88,19 @@ class Magja_Catalog_Model_CatalogInventory_Api extends Mage_CatalogInventory_Mod
     
     public function itemsAll()
     {
-    	$products = Mage::getModel('catalog/product')->getResourceCollection();
-    	$productIds = array();
-    	foreach ($products as $product) {
-			$productIds[] = $product->getId();
-    	}
-    	$result = $this->items($productIds);
-    	return $result;
+    	$products = Mage::getModel('catalog/product')->getCollection();
+    	$result = array();
+        foreach ($products as $product) {
+            if ($product->getStockItem()) {
+                $result[] = array(
+                    'product_id'    => $product->getId(),
+                    'sku'           => $product->getSku(),
+                    'qty'           => $product->getStockItem()->getQty(),
+                    'is_in_stock'   => $product->getStockItem()->getIsInStock()
+                );
+            }
+        }
+        return $result;
     }
     
 } // Class Mage_CatalogInventory_Model_Stock_Item_Api End
