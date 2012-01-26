@@ -5,6 +5,7 @@
             <version>0.0.2</version>
             <depends>
                 <Mage_Catalog />
+                <Mage_CatalogInventory />
             </depends>
         </Magja_Catalog>
     </modules>
@@ -18,6 +19,11 @@
                     <category_api>Magja_Catalog_Model_Category_Api</category_api>
                 </rewrite>
             </catalog>
+         	<cataloginventory>
+                <rewrite>
+                	<stock_item_api>Magja_Catalog_Model_CatalogInventory_Api</stock_item_api>
+                </rewrite>
+            </cataloginventory>
         </models>
     </global>
 </config>
