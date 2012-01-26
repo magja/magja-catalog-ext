@@ -85,4 +85,16 @@ class Magja_Catalog_Model_CatalogInventory_Api extends Mage_CatalogInventory_Mod
 
         return $result;
     }
+    
+    public function itemsAll()
+    {
+    	$products = Mage::getModel('catalog/product')->getResourceCollection();
+    	$productIds = array();
+    	foreach ($products as $product) {
+			$productIds[] = $product->getId();
+    	}
+    	$result = $this->items($productIds);
+    	return $result;
+    }
+    
 } // Class Mage_CatalogInventory_Model_Stock_Item_Api End

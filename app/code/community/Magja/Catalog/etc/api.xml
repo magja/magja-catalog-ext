@@ -117,6 +117,16 @@
                     </list_ex>
                 </methods>
             </catalog_product>
+
+            <cataloginventory_stock_item>
+                <methods>
+                    <list_all translate="title" module="cataloginventory">
+                        <title>Retrieve stock data for all products</title>
+                        <method>itemsAll</method>
+                        <acl>cataloginventory/info</acl>
+                    </list_all>
+                </methods>
+            </cataloginventory_stock_item>
             
         </resources>
     </api>
