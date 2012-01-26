@@ -34,12 +34,24 @@
 class Magja_Catalog_Model_CatalogInventory_Api extends Mage_CatalogInventory_Model_Stock_Item_Api
 {
 	
+	protected function splitByComma($str) {
+		$raw_ids = explode(',', $str);
+		$result = array();
+		foreach ($raw_ids as $id) {
+			$result[] = trim($id);
+		}
+		return $result;
+	}
+	
     public function items($productIds)
     {
-        if (!is_array($productIds)) {
-        	
+    	if (is_array($productIds) && isset($productIds['product_ids'])) {
+    		$productIds = $this->splitByComma($productIds['product_ids']);
+    	}
+
+    	if (!is_array($productIds)) {
         	if (is_string($productIds)) {
-        		$productIds = split(',', $productIds);
+        		$productIds = $this->splitByComma($productIds);
         	} else {
             	$productIds = array($productIds);
         	}
