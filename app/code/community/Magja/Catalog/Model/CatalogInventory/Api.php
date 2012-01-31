@@ -88,7 +88,8 @@ class Magja_Catalog_Model_CatalogInventory_Api extends Mage_CatalogInventory_Mod
     
     public function itemsAll()
     {
-    	$products = Mage::getModel('catalog/product')->getCollection();
+    	$products = Mage::getModel('catalog/product')->getCollection()
+            ->setFlag('require_stock_items', true);
     	$result = array();
         foreach ($products as $product) {
             if ($product->getStockItem()) {
