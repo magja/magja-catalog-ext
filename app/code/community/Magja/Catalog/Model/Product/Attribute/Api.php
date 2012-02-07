@@ -25,6 +25,25 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
     }
 	
 	/**
+	 * Create attribute option
+	 *
+	 * @param string $attributeId
+	 * @param string $attributeOption
+	 * @return int
+	 */
+	public function addoption($attributeId, $attributeOption) {
+		$setup = new Mage_Eav_Model_Entity_Setup ( 'core_setup' );
+		
+		$option = array ();
+		$option ['attribute_id'] = $attributeId;
+		$option ['value'] = array( array(0 => $attributeOption) );
+		
+		$setup->addAttributeOption ( $option );
+		
+		return true;
+	}
+	
+    /**
 	 * Create attribute options
 	 *
 	 * @param string $attributeId
@@ -34,10 +53,10 @@ class Magja_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Produ
 	public function addoptions($attributeId, $attributeOptions) {
 		$setup = new Mage_Eav_Model_Entity_Setup ( 'core_setup' );
 		
-		for($i = 0; $i < sizeof ( $attributeOptions ); $i ++) {
+		foreach ($attributeOptions as $label) {
 			$option = array ();
 			$option ['attribute_id'] = $attributeId;
-			$option ['value'] [$value] [0] = $attributeOptions [$i];
+			$option ['value'] = array( array(0 => $label) );
 			
 			$setup->addAttributeOption ( $option );
 		}

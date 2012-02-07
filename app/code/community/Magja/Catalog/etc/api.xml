@@ -23,6 +23,10 @@
                         <title>Delete product attribute</title>
                         <acl>catalog/product/attribute/delete</acl>
                     </delete>
+                    <addoption translate="title" module="catalog">
+                        <title>Add attribute option</title>
+                        <acl>catalog/product/attribute/addoptions</acl>
+                    </addoption>
                     <addoptions translate="title" module="catalog">
                         <title>Add attribute options</title>
                         <acl>catalog/product/attribute/addoptions</acl>
