@@ -11,6 +11,23 @@
 class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 	
 	/**
+	* Create new product.
+	*
+	* @param string $type
+	* @param int $set
+	* @param string $sku
+	* @param array $productData
+	* @param string $store
+	* @return int
+	*/
+	public function create($type, $set, $sku, $productData, $store = null) {
+		if (is_string($productData['websites'])) {
+			$productData['websites'] = explode(',', $productData['websites']);
+		}
+		return parent::create($type, $set, $sku, $productData, $store);
+	}
+
+	/**
 	 * Retrieve product info
 	 *
 	 * @param int|string $productId
