@@ -13,6 +13,12 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 	/**
 	* Create new product.
 	*
+	* magja Enhancements:
+	* <ol>
+	*   <li><tt>websites</tt> can be comma-separated string</li>
+	*   <li><del>'Manage Stock' will be set to 'Use Config'</del></li>
+	* </ol>
+	*
 	* @param string $type
 	* @param int $set
 	* @param string $sku
@@ -24,7 +30,32 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		if (is_string($productData['websites'])) {
 			$productData['websites'] = explode(',', $productData['websites']);
 		}
-		return parent::create($type, $set, $sku, $productData, $store);
+		
+		$productId = parent::create($type, $set, $sku, $productData, $store);
+
+		// DISABLED: Too slow, not worth it 
+// 		$product = Mage::getModel('catalog/product');
+// 		if ($store != null) $product->setStoreId($store);
+// 		$product->load($productId);
+		
+// 		if (!$product->getId()) {
+// 			$this->_fault('not_exists');
+// 		}
+		
+// 		if (!$stockData = $product->getStockData()) {
+// 			$stockData = array();
+// 		}
+// 		$stockData['use_config_manage_stock'] = 1;
+
+// 		$product->setStockData($stockData);
+		
+// 		try {
+// 			$product->save();
+// 		} catch (Mage_Core_Exception $e) {
+// 			$this->_fault('not_updated', $e->getMessage());
+// 		}
+		
+		return $productId;
 	}
 
 	/**
