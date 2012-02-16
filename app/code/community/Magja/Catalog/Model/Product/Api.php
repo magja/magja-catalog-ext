@@ -93,15 +93,21 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 	protected function _prepareDataForSave($product, $productData) {
 		
 		parent::_prepareDataForSave ( $product, $productData );
+		Mage::log('Magja prepareDataForSave called');
 		
 		if (isset ( $productData ['configurable_products_data'] ) && is_array ( $productData ['configurable_products_data'] )) {
+			Mage::log('Setting configurable_products_data ' . var_export($productData['configurable_products_data'], true));
 			$product->setConfigurableProductsData ( $productData ['configurable_products_data'] );
 		}
 		
 		/*
 		 * Check for configurable products array passed through API Call
 		 */
+		if (isset ( $productData ['configurable_products_data'] ) && is_string( )) {
+			$productData ['configurable_products_data'] = json_decode($productData ['configurable_products_data']);
+		}
 		if (isset ( $productData ['configurable_attributes_data'] ) && is_array ( $productData ['configurable_attributes_data'] )) {
+			Mage::log('Setting configurable_attributes_data ' . var_export($productData['configurable_attributes_data'], true));
 			foreach ( $productData ['configurable_attributes_data'] as $key => $data ) {
 				//Check to see if these values exist, otherwise try and populate from existing values
 				$data ['label'] = (! empty ( $data ['label'] )) ? $data ['label'] : $product->getResource ()->getAttribute ( $data ['attribute_code'] )->getStoreLabel ();
