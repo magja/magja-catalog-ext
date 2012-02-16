@@ -1,0 +1,16 @@
+h1. Magja Magento Extensions
+
+h2. Product API
+
+h3. catalog_product.associate
+
+Assign associated products for a configurable product.
+
+bc. catalog_product.associate($configurableProductId, $childrenIds)
+
+Parameters:
+
+1. int $configurableProductId Configurable (parent) Product ID.
+2. array $childrenIds Array of product IDs, or a comma-separated string of IDs.
+
+Returns: true
