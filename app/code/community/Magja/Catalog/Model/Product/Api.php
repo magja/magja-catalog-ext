@@ -166,4 +166,25 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		
 		return $result;
 	}
+	
+	/**
+	* Assign associated products for a configurable product.
+	*
+	* @param int $configurableProductId Configurable (parent) Product ID.
+	* @param array $childrenIds Array of product IDs, or a comma-separated string of IDs.
+	* @return true
+	*/
+	public function associate($configurableProductId, $childrenIds) {
+		$product = Mage::getModel('catalog/product')->load($configurableProductId);
+		if (is_string($childrenIds))
+			$childrenIds = explode(',', $childrenIds);
+		$productsData = array();
+		foreach ($childrenIds as $childId) {
+			$productsData[$childId] = array();
+		}
+		$product->setConfigurableProductsData($productsData);
+		$product->save();
+		return true;
+	}
+	
 }
