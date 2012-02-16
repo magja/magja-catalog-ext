@@ -186,7 +186,7 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 			$childrenIds = explode(',', $childrenIds);
 		$productsData = array();
 		foreach ($childrenIds as $childId) {
-			$productsData[$childId] = array();
+			$productsData[trim($childId)] = array();
 		}
 		$product->setConfigurableProductsData($productsData);
 		$product->save();
