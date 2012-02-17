@@ -52,6 +52,11 @@
                         <title>Retrieve product image md5sum</title>
                         <acl>catalog/product/media/md5</acl>
                     </md5>
+                    <create_from_url translate="title" module="catalog">
+                        <title>Download image from a URL, add it as product image and return image filename</title>
+                        <method>createFromUrl</method>
+                        <acl>catalog/product/media/create</acl>
+                    </create_from_url>
                 </methods>
             </catalog_product_attribute_media>
             <catalog_category translate="title" module="catalog">
