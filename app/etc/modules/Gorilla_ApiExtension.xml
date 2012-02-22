@@ -12,7 +12,7 @@
     <modules>
         <Gorilla_ApiExtension>
             <active>true</active>
-            <codePool>local</codePool>
+            <codePool>community</codePool>
         </Gorilla_ApiExtension>
     </modules>
 </config>
