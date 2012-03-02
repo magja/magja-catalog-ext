@@ -96,6 +96,7 @@ class Magja_Catalog_Model_CatalogInventory_Api extends Mage_CatalogInventory_Mod
 				$result[] = array(
                     'product_id'    => $product->getId(),
                     'sku'           => $product->getSku(),
+                    'type'          => $product->getTypeId(),
                     'qty'           => $product->getStockItem()->getQty(),
                     'is_in_stock'   => $product->getStockItem()->getIsInStock()
 				);
