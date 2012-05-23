@@ -24,6 +24,11 @@
                 	<stock_item_api>Magja_Catalog_Model_CatalogInventory_Api</stock_item_api>
                 </rewrite>
             </cataloginventory>
+            <sales>
+            	<rewrite>
+            		<order_api>Magja_Catalog_Model_Sales_Order_Api</order_api>
+            	</rewrite>
+            </sales>
         </models>
     </global>
 </config>

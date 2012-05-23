@@ -141,6 +141,15 @@
                 </methods>
             </cataloginventory_stock_item>
             
+			<sales_order>
+                <methods>
+                    <create translate="title" module="sales">
+                        <title>Create order</title>
+                        <acl>sales/order/change</acl>
+                    </create>
+                </methods>
+            </sales_order>
+            
         </resources>
     </api>
 </config>
