@@ -140,7 +140,8 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		$transaction->addCommitCallback(array($order, 'save'));
 		$transaction->save();
 		
-		return $order;
+// 		return $order;
+		return 'success';
 	}
 	
 }
