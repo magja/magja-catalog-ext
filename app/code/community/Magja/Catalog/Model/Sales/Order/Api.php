@@ -2,6 +2,8 @@
 /**
  * Magja Sales Order API
  *
+ * Inspired by {@link Mage_Adminhtml_Model_Sales_Order_Create}.
+ * 
  * @category   Sales
  * @package    Magja_Catalog
  * @author     Rudi Wijaya <rudi@berbatik.com>
@@ -9,6 +11,11 @@
 class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 {
 
+	/**
+	 * @todo Sample order data
+	 * @param Order data $data
+	 * @throws Exception
+	 */
 	public function create($data) {
 		$customer_id = $data['customer_id'];
 		
@@ -145,8 +152,11 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		$transaction->addCommitCallback(array($order, 'save'));
 		$transaction->save();
 		
+		// TODO: send New Order Email should be customizable
+		$order->sendNewOrderEmail();
+
 // 		return $order;
-		$orderId = $order->getId();
+		$orderId = $order->getIncrementId();
 		Mage::log("Created Sales Order {$order->getId()} #{$order->getIncrementId()}"); 
 		return $orderId;
 	}
