@@ -10,11 +10,11 @@
  */
 class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 {
-
 	/**
-	 * @todo Sample order data
-	 * @param Order data $data
+	 * Create/insert new sales flat product.
+	 * @param unknown_type $data
 	 * @throws Exception
+	 * @return Ambigous <mixed, NULL, multitype:>
 	 */
 	public function create($data) {
 		$customer_id = $data['customer_id'];
@@ -125,7 +125,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 				->setStoreId($storeId)
 				->setQuoteItemId(0)
 				->setQuoteParentItemId(NULL)
-				->setProductId($productId)
+				->setProductId($product['product_id'])
 				->setProductType($_product->getTypeId())
 				->setQtyBackordered(NULL)
 				->setTotalQtyOrdered($product['qty'])
@@ -159,6 +159,24 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		$orderId = $order->getIncrementId();
 		Mage::log("Created Sales Order {$order->getId()} #{$order->getIncrementId()}"); 
 		return $orderId;
+	}
+	
+	/**
+	 * Update sales flat order by IncrementID.
+	 * @param unknown_type $incrementId
+	 */
+	public function update($data) {
+		$incrementId 	= $data['incrementId'];
+		$status			= $data['status'];
+		$awb			= $data['awb'];
+		$message		= $data['message'];
+		
+		$order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
+		
+		$order->setStatus(Mage_Sales_Model_Order::STATE_NEW);
+// 		$order->set
+		
+		$order -> save();
 	}
 	
 }
