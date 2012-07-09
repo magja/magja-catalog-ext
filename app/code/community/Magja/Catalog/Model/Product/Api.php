@@ -193,4 +193,35 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		return true;
 	}
 	
+	/**
+	 * Retrieve the URL Path, Name, and 50x50 image for
+	 * a list of products.
+	 * @param array $skus Array of SKUs.
+	 * @return array Associative array containing url_path, name, image_50x50, shop_id (if exists).
+	 */
+	public function getRefs($skus) {
+		Mage::log('getRefs '. var_export($skus, true));
+		/* @var $imageHelper Mage_Catalog_Helper_Image */
+		$imageHelper = Mage::helper('catalog/image');
+		$_product = Mage::getModel('catalog/product');
+		
+		$result = array();
+		foreach ($skus as $sku) {
+			$_product->load($_product->getIdBySku($sku));
+		
+			/* @var $image Mage_Catalog_Model_Product_Image */
+			$imageHelper->init($_product, 'small_image')->resize(50, 50);
+			$photoId = (string) $imageHelper;
+			$productRef = array(
+					'url_path' => $_product->getUrlPath(),
+					'name' => $_product->getName(),
+					'image_50x50' => $photoId,
+					'shop_id' => $_product->getShopId() );
+			$result[$sku] = $productRef;
+		}
+		Mage::log('getRefs result: '. var_export($result, true));
+		
+		return $result;
+	}
+	
 }

@@ -128,6 +128,11 @@
                         <title>Assign associated products for a configurable product.</title>
                         <acl>catalog/product/update</acl>
                     </associate>
+                    <get_refs translate="title" module="catalog">
+                        <title>Retrieve the URL Path, Name, and 50x50 image for a list of products.</title>
+                        <method>getRefs</method>
+                        <acl>catalog/product/info</acl>
+                    </get_refs>
                 </methods>
             </catalog_product>
 
