@@ -256,11 +256,6 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		}
 		$result = array();
 		foreach ($collection as $product) {
-			$attrValues = array();
-			$data = $product->getData();
-			foreach ($attributesToSelect as $attrCode) {
-				$attrValues[$attrCode] = $data[$attrCode]; 
-			}
 			$row = array(
                 'product_id'   => $product->getId(),
                 'sku'          => $product->getSku(),
@@ -269,8 +264,11 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
                 'type'         => $product->getTypeId(),
                 'category_ids' => $product->getCategoryIds(),
                 'website_ids'  => $product->getWebsiteIds(),
-                'attributes'   => $attrValues,
 			);
+			$data = $product->getData();
+			foreach ($attributesToSelect as $attrCode) {
+				$row[$attrCode] = $data[$attrCode]; 
+			}
 			$result[] = $row;
 		}
 		return $result;
