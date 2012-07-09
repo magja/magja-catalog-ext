@@ -224,4 +224,56 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		return $result;
 	}
 	
+	/**
+	 * Retrieve list of products with basic info (id, sku, type, set, name)
+	 * plus several more user-defined attributes.
+	 *
+	 * @param null|object|array $filters
+	 * @param string|int $store
+	 * @param array $attributesToSelect Array of attribute codes to select.
+	 * @return array
+	 */
+	public function itemsPlus($filters = null, $store = null, $attributesToSelect = array())
+	{
+		/* @var $collection Mage_Catalog_Model_Resource_Product_Collection */
+		$collection = Mage::getModel('catalog/product')->getCollection()
+			->addStoreFilter($this->_getStoreId($store))
+			->addAttributeToSelect('name');
+		
+		foreach ($attributesToSelect as $attrCode) {
+			$collection->addAttributeToSelect($attrCode);
+		}
+	
+		/* @var $apiHelper Mage_Api_Helper_Data */
+		$apiHelper = Mage::helper('api');
+		$filters = $apiHelper->parseFilters($filters, $this->_filtersMap);
+		try {
+			foreach ($filters as $field => $value) {
+				$collection->addFieldToFilter($field, $value);
+			}
+		} catch (Mage_Core_Exception $e) {
+			$this->_fault('filters_invalid', $e->getMessage());
+		}
+		$result = array();
+		foreach ($collection as $product) {
+			$attrValues = array();
+			$data = $product->getData();
+			foreach ($attributesToSelect as $attrCode) {
+				$attrValues[$attrCode] = $data[$attrCode]; 
+			}
+			$row = array(
+                'product_id'   => $product->getId(),
+                'sku'          => $product->getSku(),
+                'name'         => $product->getName(),
+                'set'          => $product->getAttributeSetId(),
+                'type'         => $product->getTypeId(),
+                'category_ids' => $product->getCategoryIds(),
+                'website_ids'  => $product->getWebsiteIds(),
+                'attributes'   => $attrValues,
+			);
+			$result[] = $row;
+		}
+		return $result;
+	}
+	
 }

@@ -124,6 +124,11 @@
                         <method>itemsEx</method>
                         <acl>catalog/product/info</acl>
                     </list_ex>
+                    <list_plus translate="title" module="catalog">
+                        <title>Retrieve products list with basic info plus several more user-defined attributes.</title>
+                        <method>itemsPlus</method>
+                        <acl>catalog/product/info</acl>
+                    </list_plus>
                     <associate translate="title" module="catalog">
                         <title>Assign associated products for a configurable product.</title>
                         <acl>catalog/product/update</acl>
