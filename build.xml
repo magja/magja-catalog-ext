@@ -160,12 +160,12 @@
 	<aether:artifacts id="main-artifacts">
 		<aether:artifact file="target/${extension.name}.tar.bz2" type="tar.bz2"/>
 	</aether:artifacts>
-	<aether:remoterepo id="bippo.releases" url="http://nexus.bippo.co.id/nexus/content/repositories/releases/"/>
-	<aether:remoterepo id="bippo.snapshots" url="http://nexus.bippo.co.id/nexus/content/repositories/snapshots/"/>
-	<aether:remoterepo id="annafi.releases" url="http://localhost:8080/nexus/content/repositories/releases/"/>
-	<aether:remoterepo id="annafi.snapshots" url="http://localhost:8080/nexus/content/repositories/snapshots/"/>
-	<aether:remoterepo id="bippo.gk.releases" url="http://192.168.66.17:8080/nexus/content/repositories/releases/"/>
-	<aether:remoterepo id="bippo.gk.snapshots" url="http://192.168.66.17:8080/nexus/content/repositories/snapshots/"/>
+	<aether:remoterepo id="bippo-releases" url="http://nexus.bippo.co.id/nexus/content/repositories/releases/"/>
+	<aether:remoterepo id="bippo-snapshots" url="http://nexus.bippo.co.id/nexus/content/repositories/snapshots/"/>
+	<aether:remoterepo id="annafi-releases" url="http://localhost:8080/nexus/content/repositories/releases/"/>
+	<aether:remoterepo id="annafi-snapshots" url="http://localhost:8080/nexus/content/repositories/snapshots/"/>
+	<aether:remoterepo id="bippo-gk-releases" url="http://192.168.66.17:8080/nexus/content/repositories/releases/"/>
+	<aether:remoterepo id="bippo-gk-snapshots" url="http://192.168.66.17:8080/nexus/content/repositories/snapshots/"/>
 
 	<target name="install" description="Install to local Maven repository"
 		depends="package">
@@ -174,22 +174,22 @@
 	<target name="repo.deploy" description="Deploy to nexus.bippo.co.id repository"
 		depends="package">
 		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
-			<remoterepo refid="bippo.releases"/>
-			<snapshotrepo refid="bippo.snapshots"/>
+			<remoterepo refid="bippo-releases"/>
+			<snapshotrepo refid="bippo-snapshots"/>
 		</aether:deploy>
 	</target>
 	<target name="repo.deploy.local" description="Deploy to local Nexus repository"
 		depends="package">
 		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
-			<remoterepo refid="annafi.releases"/>
-			<snapshotrepo refid="annafi.snapshots"/>
+			<remoterepo refid="annafi-releases"/>
+			<snapshotrepo refid="annafi-snapshots"/>
 		</aether:deploy>
 	</target>
 	<target name="repo.deploy.bippo.gk" description="Deploy to Bippo GK Nexus repository"
 		depends="package">
 		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
-			<remoterepo refid="bippo.gk.releases"/>
-			<snapshotrepo refid="bippo.gk.snapshots"/>
+			<remoterepo refid="bippo-gk-releases"/>
+			<snapshotrepo refid="bippo-gk-snapshots"/>
 		</aether:deploy>
 	</target>
 
