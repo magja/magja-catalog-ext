@@ -9,6 +9,7 @@
 	
 	<property name="app.code.community.dir" location="app/code/community"/>
 	<property name="app.etc.modules.dir" location="app/etc/modules"/>
+	<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
 
 	<fail unless="extension.name"/>
 	<fail unless="extension.dirname"/>
@@ -28,7 +29,7 @@
 			keyfile="${user.home}/.ssh/id_rsa" trust="true"
 			command="rm -rf ${server.dir}/var/cache/*"/>-->
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="cd '${server.dir}' &amp;&amp; wiz cache-clear"/>
 	</target>
 
@@ -38,7 +39,7 @@
 		<fail unless="server.user"/>
 		<fail unless="server.dir"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="php '${server.dir}/shell/compiler.php' compile"/>
 	</target>
 
@@ -48,13 +49,13 @@
     	<fail unless="server.port"/>
     	<fail unless="server.dir"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module1.company}'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module2.company}'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module3.company}'"/>
 		<exec executable="rsync">
 			<arg value="-e"/>
@@ -104,13 +105,13 @@
     	<fail unless="server.dir"/>
 
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module1.company}/${extension.module1.name}' '${server.dir}/app/etc/modules/${extension.module1.company}_${extension.module1.name}.xml'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module2.company}/${extension.module2.name}' '${server.dir}/app/etc/modules/${extension.module2.company}_${extension.module2.name}.xml'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module3.company}/${extension.module3.name}' '${server.dir}/app/etc/modules/${extension.module3.company}_${extension.module3.name}.xml'"/>
 		
 		<antcall target="remote.flush"/>
