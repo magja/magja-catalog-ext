@@ -1,2 +1,4 @@
 /development.properties
 /deploy.properties
+target
+.directory
