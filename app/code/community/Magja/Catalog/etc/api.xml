@@ -115,6 +115,11 @@
                         <title>Retrieve hierarchical tree using flat structure</title>
                         <acl>catalog/category/tree</acl>
                     </flat>
+                    <list_paths translate="title" module="catalog">
+                        <title>Return map of categories where the key is category URL path (e.g. "accessories/bb-pouch") and the value is a map of [id, name].</title>
+                        <method>listPaths</method>
+                        <acl>catalog/category/tree</acl>
+                    </list_paths>
                 </methods>
             </catalog_category>
             <catalog_product>
