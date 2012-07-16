@@ -274,4 +274,32 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		return $result;
 	}
 	
+	public function updatePrice($pproducts) {
+		Mage::log('Update Products Price: '. var_export($pproducts, true));
+// 		$result = array();
+		foreach ($pproducts as $pproduct) {
+			/* @var $product Mage_Catalog_Model_Product */
+// 			Mage::log('loading ' . $pproduct['sku']);
+			$product = Mage::getModel('catalog/product')
+				->loadByAttribute('sku', $pproduct['sku']);
+// 			Mage::log('product '. $product->getSku());
+			$product->setLocalPrice((real)$pproduct['local_price']);
+			$product->setPrice($pproduct['price']);
+			
+// 			$productResult = array(
+// 					'product_id'   => $product->getId(),
+// 					'sku'          => $product->getSku(),
+// 					'name'         => $product->getName(),
+// 					'set'          => $product->getAttributeSetId(),
+// 					'type'         => $product->getTypeId(),
+// 					'category_ids' => $product->getCategoryIds(),
+// 					'website_ids'  => $product->getWebsiteIds(),
+// 					'local_price'  => $product->getLocalPrice(),
+// 					'price' 	   => $product->getPrice() );
+// 			$result[$sku] = $productResult;
+			
+			$product->save();
+		}
+// 		return $result;
+	}
 }
