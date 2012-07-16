@@ -110,7 +110,6 @@
                         <title>Remove product assignment</title>
                         <acl>catalog/category/product/remove</acl>
                     </removeProduct>
-                    
                     <flat translate="title" module="catalog">
                         <title>Retrieve hierarchical tree using flat structure</title>
                         <acl>catalog/category/tree</acl>
@@ -143,6 +142,12 @@
                         <method>getRefs</method>
                         <acl>catalog/product/info</acl>
                     </get_refs>
+                    <update_price translate="title" module="catalog">
+                        <title>Update price product</title>
+                        <method>updatePrice</method>
+                        <acl>catalog/product/update</acl>
+                    </update_price>
+                    
                 </methods>
             </catalog_product>
 
