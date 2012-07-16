@@ -162,6 +162,11 @@
                         <title>Create order</title>
                         <acl>sales/order/change</acl>
                     </create>
+                    <create_ex translate="title" module="sales">
+                        <title>Create order with custom addresses</title>
+                        <method>createEx</method>
+                        <acl>sales/order/change</acl>
+                    </create_ex>
                 </methods>
             </sales_order>
             
