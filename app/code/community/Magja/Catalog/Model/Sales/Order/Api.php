@@ -168,6 +168,9 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 	 * @return Ambigous <mixed, NULL, multitype:>
 	 */
 	public function createEx($data) {
+		//Mage::log('Create sales Order Ex '. var_export($data, true));
+		//return null;
+		
 		$customer_id = $data['customer_id'];
 		
 		$customer = Mage::getModel('customer/customer')->load($customer_id);/*$customerId is the id of the customer who is placing the order, it can be passed as an argument to the function place()*/
@@ -201,63 +204,46 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		if ($billing == null)
 			throw new Exception("Customer #{$customer_id} default billing address must not be empty.");
 		
+		$newbilling = $data['billingAddress'];
+		Mage::log('trying to set billing address '. var_export($newbilling, true));
+		
 		$billingAddress = Mage::getModel('sales/order_address')
 			->setStoreId($storeId)
 			->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_BILLING)
 			->setCustomerId($customer->getId())
-			->setCustomerAddressId($customer->getDefaultBilling())
-			->setCustomer_address_id($billing->getEntityId())
-			->setPrefix($billing->getPrefix())
-			->setFirstname($billing->getFirstname())
-			->setMiddlename($billing->getMiddlename())
-			->setLastname($billing->getLastname())
-			->setSuffix($billing->getSuffix())
-			->setCompany($billing->getCompany())
-			->setStreet($billing->getStreet())
-			->setCity($billing->getCity())
-			->setCountry_id($billing->getCountryId())
-			->setRegion($billing->getRegion())
-			->setRegion_id($billing->getRegionId())
-			->setPostcode($billing->getPostcode())
-			->setTelephone($billing->getTelephone())
-			->setFax($billing->getFax());
+			->setFirstname($newbilling['firstname'])
+			->setLastname($newbilling['lastname'])
+			->setCompany($newbilling['company'])
+			->setStreet($newbilling['street'])
+			->setCity($newbilling['city'])
+			->setCountry_id($newbilling['country_id'])
+			->setRegion($newbilling['region'])
+			->setPostcode($newbilling['postcode'])
+			->setTelephone($newbilling['telephone']);
 		$order->setBillingAddress($billingAddress);
-		
+		Mage::log('billing address has been setted '. var_export($newbilling, true));
+		//return null;
 		// set shipping address
 		$shipping = $customer->getDefaultShippingAddress();
 		if ($shipping == null)
 			throw new Exception("Customer #{$customer_id} default shipping address must not be empty.");
 		
 		$shipping = $data['shippingAddress'];
-// 		$firstName = !empty($shipping->getFirstname()) ? $shipping->getFirstname() : "";
-// 		$lastName = !empty($shipping->getLastname()) ? $shipping->getLastname() : "";
-// 		$suffix = "not specified";
-// 		$company = "not specified";
-// 		$street = !empty($shipping->getStreet()) ? $shipping->getStreet() : "";
-// 		$city = !empty($shipping->getCity()) ? $shipping->getCity() : "";
-// 		$country = !empty($shipping->getCountryId()) ? $shipping->getCountryId() : "";
-// 		$region = !empty($shipping->getRegion()) ? $shipping->getRegion() : "";
-		
+		Mage::log("Shipping Address {$shipping}");
 		$shippingAddress = Mage::getModel('sales/order_address')
 			->setStoreId($storeId)
 			->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_SHIPPING)
 			->setCustomerId($customer->getId())
-			->setCustomerAddressId($customer->getDefaultShipping())
-			->setCustomer_address_id($shipping->getEntityId())
-			->setPrefix($shipping->getPrefix())
-			->setFirstname($shipping->getFirstname())
-			->setMiddlename($shipping->getMiddlename())
-			->setLastname($shipping->getLastname())
-			->setSuffix($shipping->getSuffix())
-			->setCompany($shipping->getCompany())
-			->setStreet($shipping->getStreet())
-			->setCity($shipping->getCity())
-			->setCountry_id($shipping->getCountryId())
-			->setRegion($shipping->getRegion())
-			->setRegion_id($shipping->getRegionId())
-			->setPostcode($shipping->getPostcode())
-			->setTelephone($shipping->getTelephone())
-			->setFax($shipping->getFax());
+			->setCustomerId($customer->getId())
+			->setFirstname($shipping['firstname'])
+			->setLastname($shipping['lastname'])
+			->setCompany($shipping['company'])
+			->setStreet($shipping['street'])
+			->setCity($shipping['city'])
+			->setCountry_id($shipping['country_id'])
+			->setRegion($shipping['region'])
+			->setPostcode($shipping['postcode'])
+			->setTelephone($shipping['telephone']);
 		
 		//var_dump($shippingAddress);
 		$order->setShippingAddress($shippingAddress)
