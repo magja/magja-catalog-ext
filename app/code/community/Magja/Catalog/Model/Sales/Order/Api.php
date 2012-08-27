@@ -12,7 +12,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 {
 	/**
 	 * Create/insert new sales flat product.
-	 * @param array $data
+	 * @param array $data Contains, among others: currency_code
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
 	 */
@@ -28,15 +28,16 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		//Set order
 		/* @var $order Mage_Sales_Model_Order */
 		$order = Mage::getModel('sales/order');
+		$currency_code = isset($data['currency_code']) ? $data['currency_code'] : 'USD';
 		$order
 			->setIncrementId($reservedOrderId)
 			->setStoreId($storeId)
 			->setQuoteId(0)
-			->setGlobal_currency_code('USD')
-			->setBase_currency_code('USD')
-			->setStore_currency_code('USD')
-			->setOrder_currency_code('USD');
-		
+			->setGlobal_currency_code($currency_code)
+			->setBase_currency_code($currency_code)
+			->setStore_currency_code($currency_code)
+			->setOrder_currency_code($currency_code);
+
 		// set Customer data
 		$order->setCustomer_email($customer->getEmail())
 			->setCustomerFirstname($customer->getFirstname())
@@ -163,7 +164,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 	
 	/**
 	 * Create/insert new sales flat product with custom shipping address
-	 * @param array $data
+	 * @param array $data Contains, among others: currency_code
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
 	 */
@@ -182,14 +183,15 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		//Set order
 		/* @var $order Mage_Sales_Model_Order */
 		$order = Mage::getModel('sales/order');
+		$currency_code = isset($data['currency_code']) ? $data['currency_code'] : 'USD';
 		$order
 			->setIncrementId($reservedOrderId)
 			->setStoreId($storeId)
 			->setQuoteId(0)
-			->setGlobal_currency_code('USD')
-			->setBase_currency_code('USD')
-			->setStore_currency_code('USD')
-			->setOrder_currency_code('USD');
+			->setGlobal_currency_code($currency_code)
+			->setBase_currency_code($currency_code)
+			->setStore_currency_code($currency_code)
+			->setOrder_currency_code($currency_code);
 		
 		// set Customer data
 		$order->setCustomer_email($customer->getEmail())
