@@ -10,8 +10,9 @@
  */
 class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 {
+
 	/**
-	 * Create/insert new sales flat product.
+	 * Create/insert new sales ordere.
 	 * @param array $data Contains, among others: currency_code
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
@@ -155,6 +156,32 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		
 		// TODO: send New Order Email should be customizable
 		$order->sendNewOrderEmail();
+		
+		// Quote will be picked up by Mage_CatalogInventory_Model::subtractQuoteInventory()
+		// which requires $quote->getAllItems()
+		$quote = Mage::getModel('sales/quote');
+		foreach ($order->getItemsCollection(
+				array_keys(Mage::getConfig()->getNode('adminhtml/sales/order/create/available_product_types')->asArray()),
+				true
+		) as $orderItem) {
+			/* @var $orderItem Mage_Sales_Model_Order_Item */
+			if (!$orderItem->getParentItem()) {
+				if ($order->getReordered()) {
+					$qty = $orderItem->getQtyOrdered();
+				} else {
+					$qty = $orderItem->getQtyOrdered() - $orderItem->getQtyShipped() - $orderItem->getQtyInvoiced();
+				}
+		
+				if ($qty > 0) {
+					$item = $this->initFromOrderItem($quote, $orderItem, $qty, $storeId);
+					if (is_string($item)) {
+						Mage::throwException($item);
+					}
+				}
+			}
+		}
+		// This eventually decreases the stock on Manage Stock=Yes products, observed by Mage_CatalogInventory
+		Mage::dispatchEvent('checkout_submit_all_after', array('order' => $order, 'quote' => $quote));
 
 // 		return $order;
 		$orderId = $order->getIncrementId();
@@ -163,7 +190,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 	}
 	
 	/**
-	 * Create/insert new sales flat product with custom shipping address
+	 * Create/insert new sales order with custom shipping address
 	 * @param array $data Contains, among others: currency_code
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
@@ -231,7 +258,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 			throw new Exception("Customer #{$customer_id} default shipping address must not be empty.");
 		
 		$shipping = $data['shippingAddress'];
-		Mage::log("Shipping Address {$shipping}");
+		Mage::log("sales_order.createEx with shipping Address ". var_export($shipping, true));
 		$shippingAddress = Mage::getModel('sales/order_address')
 			->setStoreId($storeId)
 			->setAddressType(Mage_Sales_Model_Quote_Address::TYPE_SHIPPING)
@@ -306,12 +333,86 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		// TODO: send New Order Email should be customizable
 		$order->sendNewOrderEmail();
 
+		// Quote will be picked up by Mage_CatalogInventory_Model::subtractQuoteInventory()
+		// which requires $quote->getAllItems()
+		$quote = Mage::getModel('sales/quote');
+		foreach ($order->getItemsCollection(
+				array_keys(Mage::getConfig()->getNode('adminhtml/sales/order/create/available_product_types')->asArray()),
+				true
+		) as $orderItem) {
+			/* @var $orderItem Mage_Sales_Model_Order_Item */
+			if (!$orderItem->getParentItem()) {
+				if ($order->getReordered()) {
+					$qty = $orderItem->getQtyOrdered();
+				} else {
+					$qty = $orderItem->getQtyOrdered() - $orderItem->getQtyShipped() - $orderItem->getQtyInvoiced();
+				}
+		
+				if ($qty > 0) {
+					$item = $this->initFromOrderItem($quote, $orderItem, $qty, $storeId);
+					if (is_string($item)) {
+						Mage::throwException($item);
+					}
+				}
+			}
+		}
+		// This eventually decreases the stock on Manage Stock=Yes products, observed by Mage_CatalogInventory
+		Mage::dispatchEvent('checkout_submit_all_after', array('order' => $order, 'quote' => $quote));
+
 // 		return $order;
 		$orderId = $order->getIncrementId();
 		Mage::log("Created Sales Order {$order->getId()} #{$order->getIncrementId()}"); 
 		return $orderId;
 	}
 	
+    /**
+     * Initialize creation data from existing order Item
+     *
+     * @param Mage_Sales_Model_Order_Item $orderItem
+     * @param int $qty
+     * @return Mage_Sales_Model_Quote_Item | string
+     */
+    protected function initFromOrderItem(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order_Item $orderItem, $qty, $storeId)
+    {
+        if (!$orderItem->getId()) {
+            return $this;
+        }
+
+        $product = Mage::getModel('catalog/product')
+            ->setStoreId($storeId)
+            ->load($orderItem->getProductId());
+
+        if ($product->getId()) {
+            $product->setSkipCheckRequiredOption(true);
+            $buyRequest = $orderItem->getBuyRequest();
+            if (is_numeric($qty)) {
+                $buyRequest->setQty($qty);
+            }
+            $item = $quote->addProduct($product, $buyRequest);
+            if (is_string($item)) {
+                return $item;
+            }
+
+            if ($additionalOptions = $orderItem->getProductOptionByCode('additional_options')) {
+                $item->addOption(new Varien_Object(
+                    array(
+                        'product' => $item->getProduct(),
+                        'code' => 'additional_options',
+                        'value' => serialize($additionalOptions)
+                    )
+                ));
+            }
+
+            Mage::dispatchEvent('sales_convert_order_item_to_quote_item', array(
+                'order_item' => $orderItem,
+                'quote_item' => $item
+            ));
+            return $item;
+        }
+
+        return $this;
+    }
+
 	/**
 	 * Update sales flat order by IncrementID.
 	 * @param unknown_type $incrementId
@@ -325,9 +426,8 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		$order = Mage::getModel('sales/order')->loadByIncrementId($incrementId);
 		
 		$order->setStatus(Mage_Sales_Model_Order::STATE_NEW);
-// 		$order->set
 		
-		$order -> save();
+		$order->save();
 	}
 	
 }
