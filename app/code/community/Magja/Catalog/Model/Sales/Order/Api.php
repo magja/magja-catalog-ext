@@ -12,7 +12,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 {
 
 	/**
-	 * Create/insert new sales ordere.
+	 * Create/insert new sales order.
 	 * @param array $data Contains, among others: currency_code
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
@@ -192,6 +192,10 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 	/**
 	 * Create/insert new sales order with custom shipping address
 	 * @param array $data Contains, among others: currency_code
+	 *   Additional: shipping_method (default: flatrate_flatrate);
+	 *   shipping_description (default: 'Flat Rate - Fixed'),
+	 *   payment_method (default: 'banktransfer'), others: purchaseorder, checkmo;
+	 *   shipping_amount (default: 0)
 	 * @throws Exception
 	 * @return Ambigous <mixed, NULL, multitype:>
 	 */
@@ -215,17 +219,17 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 			->setIncrementId($reservedOrderId)
 			->setStoreId($storeId)
 			->setQuoteId(0)
-			->setGlobal_currency_code($currency_code)
-			->setBase_currency_code($currency_code)
-			->setStore_currency_code($currency_code)
-			->setOrder_currency_code($currency_code);
+			->setGlobalCurrencyCode($currency_code)
+			->setBaseCurrencyCode($currency_code)
+			->setStoreCurrencyCode($currency_code)
+			->setOrderCurrencyCode($currency_code);
 		
 		// set Customer data
-		$order->setCustomer_email($customer->getEmail())
+		$order->setCustomerEmail($customer->getEmail())
 			->setCustomerFirstname($customer->getFirstname())
 			->setCustomerLastname($customer->getLastname())
 			->setCustomerGroupId($customer->getGroupId())
-			->setCustomer_is_guest(0)
+			->setCustomerIsGuest(0)
 			->setCustomer($customer);
 		
 		// set Billing Address
@@ -245,7 +249,7 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 			->setCompany($newbilling['company'])
 			->setStreet($newbilling['street'])
 			->setCity($newbilling['city'])
-			->setCountry_id($newbilling['country_id'])
+			->setCountryId($newbilling['country_id'])
 			->setRegion($newbilling['region'])
 			->setPostcode($newbilling['postcode'])
 			->setTelephone($newbilling['telephone']);
@@ -269,29 +273,30 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 			->setCompany($shipping['company'])
 			->setStreet($shipping['street'])
 			->setCity($shipping['city'])
-			->setCountry_id($shipping['country_id'])
+			->setCountryId($shipping['country_id'])
 			->setRegion($shipping['region'])
 			->setPostcode($shipping['postcode'])
 			->setTelephone($shipping['telephone']);
 		
 		//var_dump($shippingAddress);
 		$order->setShippingAddress($shippingAddress)
-			->setShipping_method('flatrate_flatrate')
-			->setShippingDescription('flatrate');
+			->setShippingMethod(!empty($data['shipping_method']) ? $data['shipping_method'] : 'flatrate_flatrate')
+			->setShippingDescription(!empty($data['shipping_description']) ? $data['shipping_description'] : 'Flat Rate - Fixed');
+
+		$shippingCost = !empty($data['shipping_amount']) ? $data['shipping_amount'] : 0;
+		$order->setShippingAmount($shippingCost);
+		$order->setShippingInclTax($shippingCost);
 		
+		// Set sales order payment method
 		$orderPayment = Mage::getModel('sales/order_payment')
 			->setStoreId($storeId)
 			->setCustomerPaymentId(0)
-			->setMethod('purchaseorder')
-			->setPo_number(' - ');
+			->setMethod('banktransfer'); // ->setMethod('banktransfer');//->setMethod('purchaseorder') // ->setMethod('checkmo');
+			//->setPo_number('-');
 		$order->setPayment($orderPayment);
 		
 		// Set sales order status to 'complete'
 		$order->setStatus(Mage_Sales_Model_Order::STATE_COMPLETE);
-		
-		// Set sales order payment method
-		$payment = Mage::getModel('sales/order_payment')->setMethod('checkmo');
-		$order->setPayment($payment);
 		
 		//Set products
 		$subTotal = 0;
@@ -320,10 +325,11 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 			$order->addItem($orderItem);
 		}
 		
+		$grandTotal = $subTotal + $shippingCost;
 		$order->setSubtotal($subTotal)
 			->setBaseSubtotal($subTotal)
-			->setGrandTotal($subTotal)
-			->setBaseGrandTotal($subTotal);
+			->setGrandTotal($grandTotal)
+			->setBaseGrandTotal($grandTotal);
 		
 		$transaction->addObject($order);
 		$transaction->addCommitCallback(array($order, 'place'));
