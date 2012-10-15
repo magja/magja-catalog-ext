@@ -365,9 +365,9 @@ class Magja_Catalog_Model_Sales_Order_Api extends Mage_Sales_Model_Order_Api
 		// This eventually decreases the stock on Manage Stock=Yes products, observed by Mage_CatalogInventory
 		Mage::dispatchEvent('checkout_submit_all_after', array('order' => $order, 'quote' => $quote));
 		// do index for cataloginventory_stock
+		Mage::log("Reindexing product stock status");
 		$stockIndexer = Mage::getSingleton('index/indexer')->getProcessByCode('cataloginventory_stock');
 		$stockIndexer->reindexEverything();
-		
 // 		return $order;
 		$orderId = $order->getIncrementId();
 		Mage::log("Created Sales Order {$order->getId()} #{$order->getIncrementId()}"); 
