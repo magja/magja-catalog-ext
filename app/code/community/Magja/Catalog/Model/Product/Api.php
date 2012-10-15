@@ -32,7 +32,9 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		}
 		
 		$productId = parent::create($type, $set, $sku, $productData, $store);
-
+		Mage::log("Reindexing product stock status");
+		$stockIndexer = Mage::getSingleton('index/indexer')->getProcessByCode('cataloginventory_stock');
+		$stockIndexer->reindexEverything();
 		// DISABLED: Too slow, not worth it 
 // 		$product = Mage::getModel('catalog/product');
 // 		if ($store != null) $product->setStoreId($store);
