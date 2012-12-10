@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="magja-catalog-ext">
+<project name="magja-catalog-ext" xmlns:aether="antlib:org.sonatype.aether.ant">
+	
+	<taskdef uri="antlib:org.sonatype.aether.ant" resource="org/sonatype/aether/ant/antlib.xml"/>
+
 	<property file="extension.properties"/>
 	<property file="deploy.properties"/>
 	<property file="development.properties"/>
 	
 	<property name="app.code.community.dir" location="app/code/community"/>
 	<property name="app.etc.modules.dir" location="app/etc/modules"/>
+	<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
 
 	<fail unless="extension.name"/>
 	<fail unless="extension.dirname"/>
@@ -25,7 +29,7 @@
 			keyfile="${user.home}/.ssh/id_rsa" trust="true"
 			command="rm -rf ${server.dir}/var/cache/*"/>-->
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="cd '${server.dir}' &amp;&amp; wiz cache-clear"/>
 	</target>
 
@@ -35,24 +39,23 @@
 		<fail unless="server.user"/>
 		<fail unless="server.dir"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="php '${server.dir}/shell/compiler.php' compile"/>
 	</target>
 
-    <target name="deploy"
-		description="Deploy ${extension.name} files to ${server.user}@${server.host}:${server.dir} at port ${server.port}. Then recompile and flush.">
+    <target name="deploy.only">
     	<fail unless="server.user"/>
     	<fail unless="server.host"/>
     	<fail unless="server.port"/>
     	<fail unless="server.dir"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module1.company}'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module2.company}'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="mkdir -vp '${server.dir}/app/code/community/${extension.module3.company}'"/>
 		<exec executable="rsync">
 			<arg value="-e"/>
@@ -87,6 +90,10 @@
 			<arg value="${app.etc.modules.dir}/${extension.module3.company}_${extension.module3.name}.xml"/>
 			<arg value="${server.user}@${server.host}:${server.dir}/app/etc/modules" />
 		</exec>
+    </target>
+    <target name="deploy"
+		description="Deploy ${extension.name} files to ${server.user}@${server.host}:${server.dir} at port ${server.port}. Then recompile and flush.">
+    	<antcall target="deploy.only" />
     	<antcall target="remote.compile" />
     	<antcall target="remote.flush" />
     </target>
@@ -98,13 +105,13 @@
     	<fail unless="server.dir"/>
 
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module1.company}/${extension.module1.name}' '${server.dir}/app/etc/modules/${extension.module1.company}_${extension.module1.name}.xml'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module2.company}/${extension.module2.name}' '${server.dir}/app/etc/modules/${extension.module2.company}_${extension.module2.name}.xml'"/>
 		<sshexec host="${server.host}" username="${server.user}" port="${server.port}"
-			keyfile="${user.home}/.ssh/id_rsa" trust="true"
+			keyfile="${ssh.keyfile}" trust="true"
 			command="rm -rvf '${server.dir}/app/code/community/${extension.module3.company}/${extension.module3.name}' '${server.dir}/app/etc/modules/${extension.module3.company}_${extension.module3.name}.xml'"/>
 		
 		<antcall target="remote.flush"/>
@@ -136,4 +143,54 @@
 		<delete file="${magento.dir}/app/etc/modules/${extension.module3.company}_${extension.module3.name}.xml" />
 	</target>
 		
+	<target name="package" description="Package into tar.bz2">
+		<tar destfile="target/${extension.name}.tar.bz2"
+			compression="bzip2" basedir=".">
+			<include name="${extension.module.company}_${extension.module.name}.xml"/>
+			<include name="build.xml"/>
+			<include name="maven-pom.xml"/>
+			<include name="*.sample"/>
+			<include name="extension.properties"/>
+			<include name="README.*"/>
+			<include name="app/**"/>
+		</tar>
+	</target>
+
+	<aether:pom id="main-pom" file="maven-pom.xml"/>
+	<aether:artifacts id="main-artifacts">
+		<aether:artifact file="target/${extension.name}.tar.bz2" type="tar.bz2"/>
+	</aether:artifacts>
+	<aether:remoterepo id="bippo-private-releases" url="http://nexus.bippo.co.id/nexus/content/repositories/bippo-private-releases/"/>
+	<aether:remoterepo id="bippo-private-snapshots" url="http://nexus.bippo.co.id/nexus/content/repositories/bippo-private-snapshots/"/>
+	<aether:remoterepo id="annafi-releases" url="http://localhost:8080/nexus/content/repositories/releases/"/>
+	<aether:remoterepo id="annafi-snapshots" url="http://localhost:8080/nexus/content/repositories/snapshots/"/>
+	<aether:remoterepo id="bippo-gk-releases" url="http://192.168.66.17:8080/nexus/content/repositories/releases/"/>
+	<aether:remoterepo id="bippo-gk-snapshots" url="http://192.168.66.17:8080/nexus/content/repositories/snapshots/"/>
+
+	<target name="install" description="Install to local Maven repository"
+		depends="package">
+		<aether:install artifactsref="main-artifacts" pomref="main-pom"/>
+	</target>
+	<target name="repo.deploy" description="Deploy to nexus.bippo.co.id repository"
+		depends="package">
+		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
+			<remoterepo refid="bippo-private-releases"/>
+			<snapshotrepo refid="bippo-private-snapshots"/>
+		</aether:deploy>
+	</target>
+	<target name="repo.deploy.local" description="Deploy to local Nexus repository"
+		depends="package">
+		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
+			<remoterepo refid="annafi-releases"/>
+			<snapshotrepo refid="annafi-snapshots"/>
+		</aether:deploy>
+	</target>
+	<target name="repo.deploy.bippo.gk" description="Deploy to Bippo GK Nexus repository"
+		depends="package">
+		<aether:deploy artifactsref="main-artifacts" pomref="main-pom">
+			<remoterepo refid="bippo-gk-releases"/>
+			<snapshotrepo refid="bippo-gk-snapshots"/>
+		</aether:deploy>
+	</target>
+
 </project>

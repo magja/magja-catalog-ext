@@ -32,7 +32,9 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		}
 		
 		$productId = parent::create($type, $set, $sku, $productData, $store);
-
+		Mage::log("Reindexing product stock status");
+		$stockIndexer = Mage::getSingleton('index/indexer')->getProcessByCode('cataloginventory_stock');
+		$stockIndexer->reindexEverything();
 		// DISABLED: Too slow, not worth it 
 // 		$product = Mage::getModel('catalog/product');
 // 		if ($store != null) $product->setStoreId($store);
@@ -194,4 +196,113 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 		return true;
 	}
 	
+	/**
+	 * Retrieve the URL Path, Name, and 50x50 image for
+	 * a list of products.
+	 * @param array $skus Array of SKUs.
+	 * @return array Associative array containing url_path, name, image_50x50, shop_id (if exists).
+	 */
+	public function getRefs($skus) {
+		Mage::log('getRefs '. var_export($skus, true));
+		/* @var $imageHelper Mage_Catalog_Helper_Image */
+		$imageHelper = Mage::helper('catalog/image');
+		$_product = Mage::getModel('catalog/product');
+		
+		$result = array();
+		foreach ($skus as $sku) {
+			$_product->load($_product->getIdBySku($sku));
+		
+			/* @var $image Mage_Catalog_Model_Product_Image */
+			$imageHelper->init($_product, 'small_image')->resize(50, 50);
+			$photoId = (string) $imageHelper;
+			$productRef = array(
+					'url_path' => $_product->getUrlPath(),
+					'name' => $_product->getName(),
+					'image_50x50' => $photoId,
+					'shop_id' => $_product->getShopId() );
+			$result[$sku] = $productRef;
+		}
+		Mage::log('getRefs result: '. var_export($result, true));
+		
+		return $result;
+	}
+	
+	/**
+	 * Retrieve list of products with basic info (id, sku, type, set, name)
+	 * plus several more user-defined attributes.
+	 *
+	 * @param null|object|array $filters
+	 * @param string|int $store
+	 * @param array $attributesToSelect Array of attribute codes to select.
+	 * @return array
+	 */
+	public function itemsPlus($filters = null, $store = null, $attributesToSelect = array())
+	{
+		/* @var $collection Mage_Catalog_Model_Resource_Product_Collection */
+		$collection = Mage::getModel('catalog/product')->getCollection()
+			->addStoreFilter($this->_getStoreId($store))
+			->addAttributeToSelect('name');
+		
+		foreach ($attributesToSelect as $attrCode) {
+			$collection->addAttributeToSelect($attrCode);
+		}
+	
+		/* @var $apiHelper Mage_Api_Helper_Data */
+		$apiHelper = Mage::helper('api');
+		$filters = $apiHelper->parseFilters($filters, $this->_filtersMap);
+		try {
+			foreach ($filters as $field => $value) {
+				$collection->addFieldToFilter($field, $value);
+			}
+		} catch (Mage_Core_Exception $e) {
+			$this->_fault('filters_invalid', $e->getMessage());
+		}
+		$result = array();
+		foreach ($collection as $product) {
+			$row = array(
+                'product_id'   => $product->getId(),
+                'sku'          => $product->getSku(),
+                'name'         => $product->getName(),
+                'set'          => $product->getAttributeSetId(),
+                'type'         => $product->getTypeId(),
+                'category_ids' => $product->getCategoryIds(),
+                'website_ids'  => $product->getWebsiteIds(),
+			);
+			$data = $product->getData();
+			foreach ($attributesToSelect as $attrCode) {
+				$row[$attrCode] = $data[$attrCode]; 
+			}
+			$result[] = $row;
+		}
+		return $result;
+	}
+	
+	public function updatePrice($pproducts) {
+		Mage::log('Update Products Price: '. var_export($pproducts, true));
+// 		$result = array();
+		foreach ($pproducts as $pproduct) {
+			/* @var $product Mage_Catalog_Model_Product */
+// 			Mage::log('loading ' . $pproduct['sku']);
+			$product = Mage::getModel('catalog/product')
+				->loadByAttribute('sku', $pproduct['sku']);
+// 			Mage::log('product '. $product->getSku());
+			$product->setLocalPrice((real)$pproduct['local_price']);
+			$product->setPrice($pproduct['price']);
+			
+// 			$productResult = array(
+// 					'product_id'   => $product->getId(),
+// 					'sku'          => $product->getSku(),
+// 					'name'         => $product->getName(),
+// 					'set'          => $product->getAttributeSetId(),
+// 					'type'         => $product->getTypeId(),
+// 					'category_ids' => $product->getCategoryIds(),
+// 					'website_ids'  => $product->getWebsiteIds(),
+// 					'local_price'  => $product->getLocalPrice(),
+// 					'price' 	   => $product->getPrice() );
+// 			$result[$sku] = $productResult;
+			
+			$product->save();
+		}
+// 		return $result;
+	}
 }

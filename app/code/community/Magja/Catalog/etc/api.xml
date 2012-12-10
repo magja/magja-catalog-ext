@@ -110,11 +110,15 @@
                         <title>Remove product assignment</title>
                         <acl>catalog/category/product/remove</acl>
                     </removeProduct>
-                    
                     <flat translate="title" module="catalog">
                         <title>Retrieve hierarchical tree using flat structure</title>
                         <acl>catalog/category/tree</acl>
                     </flat>
+                    <list_paths translate="title" module="catalog">
+                        <title>Return map of categories where the key is category URL path (e.g. "accessories/bb-pouch") and the value is a map of [id, name].</title>
+                        <method>listPaths</method>
+                        <acl>catalog/category/tree</acl>
+                    </list_paths>
                 </methods>
             </catalog_category>
             <catalog_product>
@@ -124,10 +128,26 @@
                         <method>itemsEx</method>
                         <acl>catalog/product/info</acl>
                     </list_ex>
+                    <list_plus translate="title" module="catalog">
+                        <title>Retrieve products list with basic info plus several more user-defined attributes.</title>
+                        <method>itemsPlus</method>
+                        <acl>catalog/product/info</acl>
+                    </list_plus>
                     <associate translate="title" module="catalog">
                         <title>Assign associated products for a configurable product.</title>
                         <acl>catalog/product/update</acl>
                     </associate>
+                    <get_refs translate="title" module="catalog">
+                        <title>Retrieve the URL Path, Name, and 50x50 image for a list of products.</title>
+                        <method>getRefs</method>
+                        <acl>catalog/product/info</acl>
+                    </get_refs>
+                    <update_price translate="title" module="catalog">
+                        <title>Update price product</title>
+                        <method>updatePrice</method>
+                        <acl>catalog/product/update</acl>
+                    </update_price>
+                    
                 </methods>
             </catalog_product>
 
@@ -147,6 +167,11 @@
                         <title>Create order</title>
                         <acl>sales/order/change</acl>
                     </create>
+                    <create_ex translate="title" module="sales">
+                        <title>Create order with custom addresses</title>
+                        <method>createEx</method>
+                        <acl>sales/order/change</acl>
+                    </create_ex>
                 </methods>
             </sales_order>
             

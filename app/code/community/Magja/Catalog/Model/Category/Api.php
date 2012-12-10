@@ -44,6 +44,34 @@ class Magja_Catalog_Model_Category_Api extends Mage_Catalog_Model_Category_Api {
 		$categories = $this->_nodeToArrayPath($root, null);
 		return $categories;
 	}
+
+	/**
+	 * Return map of categories where the key
+	 * is category URL path (e.g. "accessories/bb-pouch")
+	 * and the value is a map of [id, name]. 
+	 */
+	public function listPaths() {
+		$categories = Mage::getModel('catalog/category')->getCollection()
+			->addAttributeToSelect('*');
+		$result = array();
+		foreach ($categories as $cat) {
+			/* @var $cat Mage_Catalog_Model_Category */
+			$urlKeyPath = $cat->getUrlKey();
+			if ($cat->getLevel() >= 2 && $urlKeyPath != '') {
+				// prepend parent url keys (if any)
+				$current = $cat->getParentCategory();
+				while ($current != null && $current->getLevel() >= 2 && $current->getUrlKey() != '') {
+					$urlKeyPath = $current->getUrlKey() . '/' . $urlKeyPath;
+					$current = $current->getParentCategory();
+				}
+				// lookup using this urlkey-path
+				$result[ $urlKeyPath ] = array(
+					'id' => $cat->getId(),
+					'name' => $cat->getName() );
+			}
+		}
+		return $result;
+	}
 	
 	/**
 	* Convert node to array with path information.
