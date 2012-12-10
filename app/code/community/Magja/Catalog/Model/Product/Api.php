@@ -164,6 +164,7 @@ class Magja_Catalog_Model_Product_Api extends Mage_Catalog_Model_Product_Api {
 	                'set'        => $product->getAttributeSetId(),
 	                'type'       => $product->getTypeId(),
 					'price'      => $product->getPrice(),
+					'cost'       => $product->getCost(),
 					'description'      => $product->getDescription(),
 					'category_ids'       => $categoryIds,
 					'category_id'       => !empty($categoryIds) ? $categoryIds[0] : null
